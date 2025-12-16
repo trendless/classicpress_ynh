@@ -1,0 +1,76 @@
+#!/bin/bash
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+#email=$(ynh_user_get_info --username="$admin" --key=mail)
+#timezone=$(timedatectl show --value --property=Timezone)
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+#ynh_script_progression "Storing installation settings..."
+
+#ynh_app_setting_set --key=email --value="$email"
+
+for i in 1 2 3 4 5 6 7 8
+do
+	j=$(ynh_string_random --length=40)
+	ynh_replace --match="KEY$i" --replace="$j" --file=$install_dir/wp-config.php
+	sleep 0.5
+done
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression "Setting up source files..."
+
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$install_dir"
+
+#chmod -R 775 "$install_dir"
+#chmod -R o-rwx "$install_dir"
+#chown -R "$app" "$install_dir"
+
+ynh_config_add --template="wp-config.php" --destination="$install_dir/wp-config.php"
+ynh_config_add --template="composer.json" --destination="$install_dir/composer.json"
+
+#=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression "Adding system configurations related to $app..."
+
+ynh_config_add_phpfpm
+
+ynh_config_add_nginx
+
+ynh_config_add_logrotate
+
+#touch "/var/log/$app/$app.log"
+#chmod 660 "/var/log/$app/$app.log"
+#chown "$app:www-data" "/var/log/$app/$app.log"
+
+ynh_config_add_fail2ban --logpath="/var/log/$app/auth.log" --failregex="Authentication (attempt for unknown user|failure for) .* from <HOST>"
+
+#=================================================
+# INSTALL APP
+#=================================================
+ynh_script_progression "Install $app..."
+
+#pushd "$install_dir"
+#	ynh_exec_as_app "php$php_version" bin/composer.phar install --no-dev --quiet
+
+#	ynh_exec_as_app "php$php_version" bin/console.php autoinstall -f "$install_dir/config/temp.config.php"
+#	ynh_safe_rm "$install_dir/config/temp.config.php"
+
+#	ynh_exec_as_app "php$php_version" bin/console.php addon enable ldapauth
+#popd
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Installation of $app complete."

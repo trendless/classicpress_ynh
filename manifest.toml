@@ -1,0 +1,72 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "classicpress"
+name = "ClassicPress"
+description.en = "lightweight, stable content management system"
+description.fr = ""
+
+version = "2.6.0~ynh1"
+
+maintainers = [""]
+
+[upstream]
+license = "GPL-2.0-or-later"
+website = "https://www.classicpress.net"
+admindoc = "https://docs.classicpress.net"
+userdoc = "https:/docs.classicpress.net"
+code = "https://github.com/ClassicPress/ClassicPress"
+
+[integration]
+yunohost = ">= 12.1"
+helpers_version = "2.1"
+architectures = "all"
+multi_instance = true
+
+ldap = false
+sso = false
+
+disk = "250M"
+ram.build = "200M"
+ram.runtime = "150M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+    [install.language]
+    ask.en = "Choose the application language"
+    ask.fr = "Choisissez la langue de l'application"
+    type = "select"
+    choices = ["de_DE", "en_US", "es_ES", "fr_FR", "it_IT", "pt_PT", "pt_BR"]
+    default = "en_US"
+
+    [install.admin]
+    type = "user"
+
+[resources]
+
+    [resources.sources]
+        [resources.sources.main]
+        url = "https://github.com/ClassicPress/ClassicPress-release/archive/refs/tags/2.6.0.tar.gz"
+        sha256 = "6a459defebfa69a5cffab99aeef846d89c292eb6089f2ca8fa537e6703d6f11d"
+        autoupdate.strategy = "latest_github_release"
+
+    [resources.system_user]
+
+    [resources.install_dir]
+    group = "www-data:rwx"
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.apt]
+    packages = "mariadb-server, php8.4-mysql, php8.4-curl, php8.4-mbstring, php8.4-xml, php8.4-zip, php8.4-gd, php8.4-soap, php8.4-ssh2, php8.4-tokenizer, php8.4-ldap, php8.4-imagick, php8.4-intl"
+
+    [resources.database]
+    type = "mysql"

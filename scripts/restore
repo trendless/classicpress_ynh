@@ -1,0 +1,71 @@
+#!/bin/bash
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RESTORE THE APP MAIN DIR
+#=================================================
+ynh_script_progression "Restoring the app main directory..."
+
+ynh_restore "$install_dir"
+
+if [ -f "$install_dir/daemon.pid" ]; then ynh_safe_rm "$install_dir/daemon.pid"; fi
+
+chmod -R o-rwx "$install_dir"
+chown -R "$app:www-data" "$install_dir"
+chmod -R 775 "$install_dir/view/smarty3"
+
+#=================================================
+# RESTORE THE MYSQL DATABASE
+#=================================================
+ynh_script_progression "Restoring the MySQL database..."
+
+ynh_mysql_db_shell < ./db.sql
+
+#=================================================
+# RESTORE SYSTEM CONFIGURATIONS
+#=================================================
+# RESTORE THE PHP-FPM CONFIGURATION
+#=================================================
+ynh_script_progression "Restoring system configurations related to $app..."
+
+ynh_restore "/etc/php/$php_version/fpm/pool.d/$app.conf"
+
+ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
+
+ynh_restore "/etc/systemd/system/$app-daemon.service"
+systemctl enable "$app-daemon.service" --quiet
+
+yunohost service add "$app-daemon" --description="Friendica daemon" --log="/var/log/$app/daemon.log"
+
+ynh_restore "/var/log/$app"
+
+ynh_restore "/etc/logrotate.d/$app"
+
+ynh_restore "/etc/fail2ban/jail.d/$app.conf"
+ynh_restore "/etc/fail2ban/filter.d/$app.conf"
+ynh_systemctl --action=restart --service=fail2ban
+
+#=================================================
+# RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
+#=================================================
+ynh_script_progression "Reloading NGINX web server and $app's service..."
+
+ynh_systemctl --service="php$php_version-fpm" --action=reload
+
+ynh_systemctl --service=nginx --action=reload
+
+ynh_systemctl --service="$app-daemon" --action="start" --log_path="/var/log/$app/daemon.log"
+
+#==============
+# FINALIZATION
+#==============
+
+# exit maintenance mode since the app was backed up while in maintenance mode
+(cd "$install_dir" && ynh_exec_as_app "php$php_version" bin/console.php maintenance 0)
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Restoration completed for $app"
