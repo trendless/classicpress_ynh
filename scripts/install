@@ -28,6 +28,8 @@ ynh_setup_source --dest_dir="$install_dir"
 #chmod -R o-rwx "$install_dir"
 #chown -R "$app" "$install_dir"
 
+dir=__DIR__
+
 ynh_config_add --template="wp-config.php" --destination="$install_dir/wp-config.php"
 
 for i in 1 2 3 4 5 6 7 8
