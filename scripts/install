@@ -16,13 +16,6 @@ source /usr/share/yunohost/helpers
 
 #ynh_app_setting_set --key=email --value="$email"
 
-for i in 1 2 3 4 5 6 7 8
-do
-	j=$(ynh_string_random --length=40)
-	ynh_replace --match="KEY$i" --replace="$j" --file=$install_dir/wp-config.php
-	sleep 0.5
-done
-
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -36,6 +29,14 @@ ynh_setup_source --dest_dir="$install_dir"
 #chown -R "$app" "$install_dir"
 
 ynh_config_add --template="wp-config.php" --destination="$install_dir/wp-config.php"
+
+for i in 1 2 3 4 5 6 7 8
+do
+	j=$(ynh_string_random --length=40)
+	ynh_replace --match="KEY$i" --replace="$j" --file=$install_dir/wp-config.php
+	sleep 0.5
+done
+
 ynh_config_add --template="composer.json" --destination="$install_dir/composer.json"
 
 #=================================================
