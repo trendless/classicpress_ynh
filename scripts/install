@@ -101,7 +101,7 @@ $wpcli_alias site switch-language $language
 #=================================================
 # CONFIGURE LDAP
 #=================================================
-ynh_mysql_db_shell < ../conf/sql/ldap.sql
+ynh_mysql_db_shell < ../conf/ldap.sql
 
 #=================================================
 # ACTIVATE WORDPRESS PLUGINS
