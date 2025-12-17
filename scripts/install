@@ -6,7 +6,7 @@ source /usr/share/yunohost/helpers
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-#email=$(ynh_user_get_info --username="$admin" --key=mail)
+email=$(ynh_user_get_info --username="$admin" --key=mail)
 #timezone=$(timedatectl show --value --property=Timezone)
 
 #=================================================
@@ -72,14 +72,8 @@ ynh_config_add_logrotate
 #=================================================
 ynh_script_progression "Install $app..."
 
-#pushd "$install_dir"
-#	ynh_exec_as_app "php$php_version" bin/composer.phar install --no-dev --quiet
-
-#	ynh_exec_as_app "php$php_version" bin/console.php autoinstall -f "$install_dir/config/temp.config.php"
-#	ynh_safe_rm "$install_dir/config/temp.config.php"
-
-#	ynh_exec_as_app "php$php_version" bin/console.php addon enable ldapauth
-#popd
+#ynh_local_curl "/wp-admin/install.php" "language-continue=$language"
+ynh_local_curl "/wp-admin/install.php?step=1" "weblog_title=$admin's $app blog" "user_name=$admin" "admin_password=$db_pwd" "admin_email=$email" "Submit=Install+ClassicPress"
 
 #=================================================
 # END OF SCRIPT
