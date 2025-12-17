@@ -80,6 +80,40 @@ ynh_script_progression "Install $app..."
 ynh_local_curl "/wp-admin/install.php?step=2" "&weblog_title=$admin%20$app%20blog" "user_name=$admin" "admin_password=$admin_pass" "admin_password2=$admin_pass" "admin_email=$email" "Submit=Install%20ClassicPress"
 
 #=================================================
+# INSTALL WORDPRESS PLUGINS
+#=================================================
+ynh_script_progression "Installing $app plugins..."
+
+ynh_hide_warnings wget --no-verbose https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar --output-document=$install_dir/wp-cli.phar
+wpcli_alias="php$php_version $install_dir/wp-cli.phar --allow-root --path=$install_dir"
+
+$wpcli_alias plugin install authldap
+#$wpcli_alias plugin install companion-auto-update
+#$wpcli_alias plugin install wp-fail2ban-redux
+
+#=================================================
+# SET LANGUAGE
+#=================================================
+ynh_script_progression "Configuring language..."
+
+$wpcli_alias core language install $language
+$wpcli_alias site switch-language $language
+
+#=================================================
+# ACTIVATE WORDPRESS PLUGINS
+#=================================================
+ynh_script_progression "Activating plugins..."
+
+$wpcli_alias plugin activate authldap $plugin_network
+#$wpcli_alias plugin activate companion-auto-update $plugin_network
+#$wpcli_alias plugin activate wp-fail2ban-redux $plugin_network
+
+#=================================================
+# REMOVE WP-CLI.PHAR
+#=================================================
+ynh_safe_rm $install_dir/wp-cli.phar
+
+#=================================================
 # END OF SCRIPT
 #=================================================
 
