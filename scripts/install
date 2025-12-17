@@ -5,11 +5,11 @@ source /usr/share/yunohost/helpers
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
-
 email=$(ynh_user_get_info --username="$admin" --key=mail)
+
 #timezone=$(timedatectl show --value --property=Timezone)
 
-admin_pass=$(ynh_string_random --length=24)
+#admin_pass=$(ynh_string_random --length=24)
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
@@ -18,14 +18,13 @@ admin_pass=$(ynh_string_random --length=24)
 
 ynh_app_setting_set --key=email --value="$email"
 
-ynh_app_setting_set --key=admin_pass --value=$admin_pass
+#ynh_app_setting_set --key=admin_pass --value=$admin_pass
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Setting up source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$install_dir"
 
 #chmod -R 775 "$install_dir"
@@ -76,7 +75,7 @@ ynh_config_add_logrotate
 #=================================================
 ynh_script_progression "Install $app..."
 
-ynh_local_curl "/wp-admin/install.php?step=2" "&weblog_title=$admin%20$app%20blog" "user_name=$admin" "admin_password=$admin_pass" "admin_password2=$admin_pass" "admin_email=$email" "Submit=Install%20ClassicPress"
+ynh_local_curl "/wp-admin/install.php?step=2" "&weblog_title=$admin%20$app%20blog" "user_name=$admin" "admin_password=$db_pwd" "admin_password2=$db_pwd" "admin_email=$email" "Submit=Install%20ClassicPress"
 
 #=================================================
 # INSTALL WORDPRESS PLUGINS
@@ -87,7 +86,7 @@ ynh_hide_warnings wget --no-verbose https://raw.githubusercontent.com/wp-cli/bui
 wpcli_alias="php$php_version $install_dir/wp-cli.phar --allow-root --path=$install_dir"
 
 $wpcli_alias plugin install authldap
-#$wpcli_alias plugin install companion-auto-update
+$wpcli_alias plugin install companion-auto-update
 #$wpcli_alias plugin install wp-fail2ban-redux
 
 #=================================================
@@ -113,8 +112,8 @@ ynh_mysql_db_shell < ../conf/ldap.sql
 ynh_script_progression "Activating plugins..."
 
 $wpcli_alias plugin activate authldap
-#$wpcli_alias plugin activate companion-auto-update $plugin_network
-#$wpcli_alias plugin activate wp-fail2ban-redux $plugin_network
+$wpcli_alias plugin activate companion-auto-update
+#$wpcli_alias plugin activate wp-fail2ban-redux
 
 #=================================================
 # REMOVE WP-CLI.PHAR
