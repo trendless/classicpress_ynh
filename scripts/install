@@ -101,6 +101,10 @@ $wpcli_alias site switch-language $language
 #=================================================
 # CONFIGURE LDAP
 #=================================================
+db_prefix="cp_"
+ynh_replace --match="__DB_PREFIX__" --replace="$db_prefix" --file=../conf/ldap.sql
+ynh_replace --match="__APP__" --replace="$app" --file=../conf/ldap.sql
+ynh_replace --match="__LENGTH__" --replace="$((${#app} + 108))" --file=../conf/ldap.sql
 ynh_mysql_db_shell < ../conf/ldap.sql
 
 #=================================================
