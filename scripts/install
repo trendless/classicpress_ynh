@@ -27,6 +27,7 @@ ynh_setup_source --dest_dir="$install_dir"
 #chmod -R 775 "$install_dir"
 #chmod -R o-rwx "$install_dir"
 #chown -R "$app" "$install_dir"
+chmod -R 770 "$install_dir/wp-content/uploads"
 
 dir=__DIR__
 
@@ -39,7 +40,7 @@ do
 	sleep 0.5
 done
 
-ynh_config_add --template="composer.json" --destination="$install_dir/composer.json"
+#ynh_config_add --template="composer.json" --destination="$install_dir/composer.json"
 
 #=================================================
 # SYSTEM CONFIGURATION
@@ -56,7 +57,7 @@ ynh_config_add_logrotate
 #chmod 660 "/var/log/$app/$app.log"
 #chown "$app:www-data" "/var/log/$app/$app.log"
 
-ynh_config_add_fail2ban --logpath="/var/log/$app/auth.log" --failregex="Authentication (attempt for unknown user|failure for) .* from <HOST>"
+#ynh_config_add_fail2ban --logpath="/var/log/$app/auth.log" --failregex="Authentication (attempt for unknown user|failure for) .* from <HOST>"
 
 #=================================================
 # INSTALL APP
