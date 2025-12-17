@@ -51,6 +51,8 @@ do
 	sleep 0.5
 done
 
+ynh_replace --match="The password you chose during installation" --replace="Your YunoHost account password" --file=$install_dir/wp-admin/includes/upgrade.php
+
 #ynh_config_add --template="composer.json" --destination="$install_dir/composer.json"
 
 #=================================================
