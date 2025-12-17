@@ -1,1 +1,0 @@
-Admin login: https://__DOMAIN__/wp-login.php
