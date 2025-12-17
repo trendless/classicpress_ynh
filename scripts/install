@@ -76,7 +76,6 @@ ynh_config_add_logrotate
 #=================================================
 ynh_script_progression "Install $app..."
 
-#ynh_local_curl "/wp-admin/install.php" "language-continue=$language"
 ynh_local_curl "/wp-admin/install.php?step=2" "&weblog_title=$admin%20$app%20blog" "user_name=$admin" "admin_password=$admin_pass" "admin_password2=$admin_pass" "admin_email=$email" "Submit=Install%20ClassicPress"
 
 #=================================================
