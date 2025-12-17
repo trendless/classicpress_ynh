@@ -27,7 +27,15 @@ ynh_setup_source --dest_dir="$install_dir"
 #chmod -R 775 "$install_dir"
 #chmod -R o-rwx "$install_dir"
 #chown -R "$app" "$install_dir"
-chmod -R 770 "$install_dir/wp-content/uploads"
+mkdir -p $install_dir/wp-content/uploads
+mkdir -p $install_dir/wp-content/temp
+chown -R $app:www-data "$install_dir"
+find "$install_dir" -type d -exec chmod 750 {} \;
+find "$install_dir" -type f -exec chmod 640 {} \;
+find "$install_dir/wp-content/uploads" -type d -exec chmod 770 {} \;
+find "$install_dir/wp-content/temp" -type d -exec chmod 770 {} \;
+setfacl -Rm d:g:www-data:rwX "$install_dir/wp-content/uploads"
+setfacl -Rm d:g:www-data:rwX "$install_dir/wp-content/temp"
 
 dir=__DIR__
 
