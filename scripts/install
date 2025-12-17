@@ -112,7 +112,7 @@ ynh_mysql_db_shell < ../conf/ldap.sql
 #=================================================
 ynh_script_progression "Activating plugins..."
 
-$wpcli_alias plugin activate authldap $plugin_network
+$wpcli_alias plugin activate authldap
 #$wpcli_alias plugin activate companion-auto-update $plugin_network
 #$wpcli_alias plugin activate wp-fail2ban-redux $plugin_network
 
