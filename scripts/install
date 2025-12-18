@@ -7,18 +7,12 @@ source /usr/share/yunohost/helpers
 #=================================================
 email=$(ynh_user_get_info --username="$admin" --key=mail)
 
-#timezone=$(timedatectl show --value --property=Timezone)
-
-#admin_pass=$(ynh_string_random --length=24)
-
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-#ynh_script_progression "Storing installation settings..."
+ynh_script_progression "Storing installation settings..."
 
 ynh_app_setting_set --key=email --value="$email"
-
-#ynh_app_setting_set --key=admin_pass --value=$admin_pass
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -53,8 +47,6 @@ done
 
 ynh_replace --match="The password you chose during installation." --replace="[your YunoHost account password]" --file=$install_dir/wp-admin/includes/upgrade.php
 
-#ynh_config_add --template="composer.json" --destination="$install_dir/composer.json"
-
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
@@ -65,10 +57,6 @@ ynh_config_add_phpfpm
 ynh_config_add_nginx
 
 ynh_config_add_logrotate
-
-#touch "/var/log/$app/$app.log"
-#chmod 660 "/var/log/$app/$app.log"
-#chown "$app:www-data" "/var/log/$app/$app.log"
 
 #ynh_config_add_fail2ban --logpath="/var/log/$app/auth.log" --failregex="Authentication (attempt for unknown user|failure for) .* from <HOST>"
 
