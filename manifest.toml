@@ -64,8 +64,7 @@ ram.runtime = "150M"
 
     [resources.permissions]
     main.url = "/"
-    admin.url = "/wp-login.php"
-    admin.additional_urls = ["/wp-admin.php", "/wp-admin"]
+    admin.url = "/wp-login"
     admin.allowed = "admins"
     admin.show_tile = false
 
