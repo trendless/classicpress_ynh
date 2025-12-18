@@ -21,19 +21,6 @@ ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
 
-#chmod -R 775 "$install_dir"
-#chmod -R o-rwx "$install_dir"
-#chown -R "$app" "$install_dir"
-mkdir -p $install_dir/wp-content/uploads
-mkdir -p $install_dir/wp-content/temp
-chown -R $app:www-data "$install_dir"
-find "$install_dir" -type d -exec chmod 750 {} \;
-find "$install_dir" -type f -exec chmod 640 {} \;
-find "$install_dir/wp-content/uploads" -type d -exec chmod 770 {} \;
-find "$install_dir/wp-content/temp" -type d -exec chmod 770 {} \;
-setfacl -Rm d:g:www-data:rwX "$install_dir/wp-content/uploads"
-setfacl -Rm d:g:www-data:rwX "$install_dir/wp-content/temp"
-
 dir=__DIR__
 
 ynh_config_add --template="wp-config.php" --destination="$install_dir/wp-config.php"
@@ -64,6 +51,12 @@ ynh_config_add_logrotate
 # INSTALL APP
 #=================================================
 ynh_script_progression "Install $app..."
+
+chown -R $app: $install_dir
+
+yunohost app ssowatconf
+
+ynh_systemctl --service=nginx --action=reload
 
 ynh_local_curl "/wp-admin/install.php?step=2" "&weblog_title=$admin%20$app%20blog" "user_name=$admin" "admin_password=$db_pwd" "admin_password2=$db_pwd" "admin_email=$email" "Submit=Install%20ClassicPress"
 
@@ -104,6 +97,19 @@ ynh_script_progression "Activating plugins..."
 $wpcli_alias plugin activate authldap
 $wpcli_alias plugin activate companion-auto-update
 #$wpcli_alias plugin activate wp-fail2ban-redux
+
+#=================================================
+# SET FILE AND DIRECTORY OWNERSHIP
+#=================================================
+mkdir -p $install_dir/wp-content/uploads
+mkdir -p $install_dir/wp-content/temp
+chown -R $app:www-data "$install_dir"
+find "$install_dir" -type d -exec chmod 750 {} \;
+find "$install_dir" -type f -exec chmod 640 {} \;
+find "$install_dir/wp-content/uploads" -type d -exec chmod 770 {} \;
+find "$install_dir/wp-content/temp" -type d -exec chmod 770 {} \;
+setfacl -Rm d:g:www-data:rwX "$install_dir/wp-content/uploads"
+setfacl -Rm d:g:www-data:rwX "$install_dir/wp-content/temp"
 
 #=================================================
 # REMOVE WP-CLI.PHAR
